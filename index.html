@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gradient-to-r from-black via-gray-800 to-black h-screen flex items-center justify-center">
+  <div class="bg-white shadow-2xl rounded-3xl w-[36rem] h-[36rem] flex flex-col items-center justify-between p-6 transform transition hover:scale-105">
+    <!-- Timer Section -->
+    <div class="flex flex-col items-center">
+      <h1 class="text-2xl font-extrabold text-gray-800 mb-4">Stopwatch</h1>
+      <div id="display" class="text-4xl font-mono font-bold text-gray-800 mb-4">
+        00:00:00.000
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex space-x-4 mb-4">
+      <button id="startPauseBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300">
+        Start
+      </button>
+      <button id="resetBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+        Reset
+      </button>
+      <button id="lapBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+        Lap
+      </button>
+    </div>
+
+    <!-- Scrollable Laps -->
+    <div class="w-full h-40 border-t border-gray-300 pt-2 overflow-y-auto">
+      <ul id="laps" class="text-gray-700 text-left text-sm pl-6"></ul>
+    </div>
+  </div>
+
+  <script>
+    let timer;
+    let isRunning = false;
+    let startTime;
+    let elapsedTime = 0;
+
+    const display = document.getElementById('display');
+    const lapsContainer = document.getElementById('laps');
+    const startPauseBtn = document.getElementById('startPauseBtn');
+
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      const milliseconds = String(ms % 1000).padStart(3, '0');
+      return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    function updateTime() {
+      const now = Date.now();
+      const deltaTime = now - startTime + elapsedTime;
+      display.textContent = formatTime(deltaTime);
+    }
+
+    document.getElementById('startPauseBtn').onclick = () => {
+      if (isRunning) {
+        clearInterval(timer);
+        elapsedTime += Date.now() - startTime;
+        startPauseBtn.textContent = 'Start';
+      } else {
+        startTime = Date.now();
+        timer = setInterval(updateTime, 10);
+        startPauseBtn.textContent = 'Pause';
+      }
+      isRunning = !isRunning;
+    };
+
+    document.getElementById('resetBtn').onclick = () => {
+      clearInterval(timer);
+      isRunning = false;
+      elapsedTime = 0;
+      display.textContent = '00:00:00.000';
+      lapsContainer.innerHTML = '';
+      startPauseBtn.textContent = 'Start';
+    };
+
+    document.getElementById('lapBtn').onclick = () => {
+      if (isRunning) {
+        const lapTime = display.textContent;
+        const lapItem = document.createElement('li');
+        lapItem.textContent = `Lap: ${lapTime}`;
+        lapItem.className = "py-1 border-b border-gray-200";
+        lapsContainer.appendChild(lapItem);
+      }
+    };
+  </script>
+</body>
+</html>

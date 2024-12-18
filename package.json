@@ -1,0 +1,14 @@
+{
+  "name": "stopwatch",
+  "version": "1.0.0",
+  "description": "watch",
+  "main": "index.js",
+  "scripts": {
+    "start" : "vite"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vite": "^6.0.3"
+  }
+}
